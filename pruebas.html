@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            html {
+                background-color: #000;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Audio</h1>
+
+        <audio id="myAudio" controls src="http://developer.mozilla.org/@api/deki/files/2926/=AudioTest_(1).ogg">
+            Audio no soportado
+        </audio>
+
+        <hr/>
+
+        <button id="playBtn">Play</button>
+        <button id="pauseBtn">Pause</button>
+        <button id="stopBtn">Stop oscillator</button>
+
+        <script type="text/javascript">
+            window.onload = function() {
+                console.log('load');
+
+                var myAudioElm = document.getElementById('myAudio');
+                //console.log(myAudioElm);
+
+                playBtn.onclick = function() {
+                    myAudioElm.play();
+                };
+                pauseBtn.onclick = function() {
+                    myAudioElm.pause();
+                };
+                stopBtn.onclick = function() {
+                    oscillator.stop();
+                };
+
+                var AudioContext = window.AudioContext || window.webkitAudioContext;
+
+                var audioCtx = new AudioContext();
+
+                var oscillator = audioCtx.createOscillator();
+                oscillator.frequency.value = 300;
+
+                var gainNode = audioCtx.createGain();
+                gainNode.gain.value = 0.7;
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                console.log('oscillator.context: ', oscillator.context);
+                console.log('oscillator.numberOfInputs: ', oscillator.numberOfInputs);
+                console.log('oscillator.numberOfOutputs: ', oscillator.numberOfOutputs);
+                console.log('oscillator.channelCount: ', oscillator.channelCount);
+
+                console.log('gainNode.context: ', gainNode.context);
+                console.log('gainNode.numberOfInputs: ', gainNode.numberOfInputs);
+                console.log('gainNode.numberOfOutputs: ', gainNode.numberOfOutputs);
+                console.log('gainNode.channelCount: ', gainNode.channelCount);
+
+                //oscillator.start(0);
+
+
+                /*
+                // Rithm
+                var context = new AudioContext();
+                startTime = 0;
+                eighthNoteTime = 1;
+                kick = 0.5;
+                snare = 0.3;
+                hihat = 1.2;
+
+                for (var bar = 0; bar < 2; bar++) {
+                    var time = startTime + bar * 8 * eighthNoteTime;
+                    // Play the bass (kick) drum on beats 1, 5
+                    playSound(kick, time);
+                    playSound(kick, time + 4 * eighthNoteTime);
+
+                    // Play the snare drum on beats 3, 7
+                    playSound(snare, time + 2 * eighthNoteTime);
+                    playSound(snare, time + 6 * eighthNoteTime);
+
+                    // Play the hi-hat every eighth note.
+                    for (var i = 0; i < 8; ++i) {
+                        playSound(hihat, time + i * eighthNoteTime);
+                    }
+                }
+
+                function playSound(buffer, time) {
+                    var source = context.createBufferSource();
+                    source.buffer = buffer;
+                    source.connect(context.destination);
+                    source.start(time);
+                }
+                */
+
+                var RhythmSample = {
+                };
+
+                RhythmSample.play = function() {
+                    function playSound(buffer, time) {
+                        var source = context.createBufferSource();
+                        source.buffer = buffer;
+                        source.connect(context.destination);
+                        if (!source.start)
+                            source.start = source.noteOn;
+                        source.start(time);
+                    }
+
+                    var kick = BUFFERS.kick;
+                    var snare = BUFFERS.snare;
+                    var hihat = BUFFERS.hihat;
+
+                    // We'll start playing the rhythm 100 milliseconds from "now"
+                    var startTime = context.currentTime + 0.100;
+                    var tempo = 80; // BPM (beats per minute)
+                    var eighthNoteTime = (60 / tempo) / 2;
+
+                    // Play 2 bars of the following:
+                    for (var bar = 0; bar < 2; bar++) {
+                        var time = startTime + bar * 8 * eighthNoteTime;
+                        // Play the bass (kick) drum on beats 1, 5
+                        playSound(kick, time);
+                        playSound(kick, time + 4 * eighthNoteTime);
+
+                        // Play the snare drum on beats 3, 7
+                        playSound(snare, time + 2 * eighthNoteTime);
+                        playSound(snare, time + 6 * eighthNoteTime);
+
+                        // Play the hi-hat every eighthh note.
+                        for (var i = 0; i < 8; ++i) {
+                            playSound(hihat, time + i * eighthNoteTime);
+                        }
+                    }
+                };
+
+                RhythmSample.play();
+
+            };
+        </script>
+    </body>
+</html>
+
